@@ -1,18 +1,19 @@
 [tool.poetry]
 name = "geobook"
 version = "0.0.1"
-description = ""
+description = "The geospatial repository next generation."
 authors = [
   "Aliaksandr Vaskevich <vaskevic.an@gmail.com>",
 ]
 license = "MIT"
-readme = "README.rst"
+readme = "README.md"
 
 homepage = "https://github.com/gb-libs/geobook"
 repository = "https://github.com/gb-libs/geobook"
 documentation = "https://github.com/gb-libs/geobook"
 
 keywords = [
+  "geospatial",
   "gis",
   "geo",
   "json",
