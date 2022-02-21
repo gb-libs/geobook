@@ -35,6 +35,16 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
+fastapi = "^0.72.0"
+uvicorn = "^0.17.0"
+isort = "^5.10.1"
+pydantic = {extras = ["dotenv"], version = "^1.9.0"}
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+asyncio = "^3.4.3"
+motor = "^2.5.1"
+click = "^8.0.3"
+jwt = "^1.3.1"
 
 [tool.poetry.dev-dependencies]
 
@@ -42,3 +52,7 @@ python = "^3.10"
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
+[tool.isort]
+profile = "hug"
+src_paths = ["isort", "tests"]
