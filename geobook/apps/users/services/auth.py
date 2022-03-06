@@ -1,71 +1,50 @@
-import os
-from datetime import datetime, timedelta
-
 import jwt
 from fastapi import HTTPException
-
 from geobook.apps.users.managers.user import UserManager
+from geobook.apps.users.models.auth import AccessToken, JWTPayload
+from geobook.apps.users.models.user import UserReadModel
 from geobook.apps.users.services.base import BaseUserService
 from geobook.settings.common import Settings
 
 
-class Auth(BaseUserService):
+class AuthService(BaseUserService):
+
     def __init__(
-        self,
-        settings: Settings,
+            self,
+            settings: Settings,
     ):
         self.settings = settings
         self.user_manager = UserManager(settings=settings)
 
-    def encode_token(self, username):
-        payload = {
-            'exp': datetime.utcnow() + timedelta(days=0, minutes=30),
-            'iat': datetime.utcnow(),
-            'scope': 'access_token',
-            'sub': username
-        }
-        return jwt.encode(
-            payload,
-            self.secret,
-            algorithm='HS256'
-        )
+    async def encode_token(self, username: str) -> AccessToken:
+        jwt_payload = JWTPayload(sub=username)
 
-    def decode_token(self, token):
+        token = jwt.encode(
+            payload=jwt_payload.dict(),
+            key=self.settings.SECRET,
+            algorithm=self.algorithm)
+
+        return AccessToken(
+            token=token,
+            expires=jwt_payload.exp)
+
+    async def decode_token(self, token: str) -> UserReadModel:
         try:
-            payload = jwt.decode(token, self.secret, algorithms=['HS256'])
-            if (payload['scope'] == 'access_token'):
-                return payload['sub']
-            raise HTTPException(status_code=401,
-                                detail='Scope for the token is invalid')
+            decoded_token = jwt.decode(
+                jwt=token,
+                key=self.settings.SECRET,
+                algorithms=[self.algorithm])
+
+            jwt_payload = JWTPayload(**decoded_token)
+
+            if jwt_payload.sub:
+                user = await self.user_manager.get_user_by_username(
+                    username=jwt_payload.sub)
+                if user:
+                    return user
+
+            raise HTTPException(status_code=401, detail='Username is invalid')
         except jwt.ExpiredSignatureError:
             raise HTTPException(status_code=401, detail='Token expired')
         except jwt.InvalidTokenError:
             raise HTTPException(status_code=401, detail='Invalid token')
-
-    def encode_refresh_token(self, username):
-        payload = {
-            'exp': datetime.utcnow() + timedelta(days=0, hours=10),
-            'iat': datetime.utcnow(),
-            'scope': 'refresh_token',
-            'sub': username
-        }
-        return jwt.encode(
-            payload,
-            self.secret,
-            algorithm='HS256'
-        )
-
-    def refresh_token(self, refresh_token):
-        try:
-            payload = jwt.decode(refresh_token, self.secret,
-                                 algorithms=['HS256'])
-            if (payload['scope'] == 'refresh_token'):
-                username = payload['sub']
-                new_token = self.encode_token(username)
-                return new_token
-            raise HTTPException(status_code=401,
-                                detail='Invalid scope for token')
-        except jwt.ExpiredSignatureError:
-            raise HTTPException(status_code=401, detail='Refresh token expired')
-        except jwt.InvalidTokenError:
-            raise HTTPException(status_code=401, detail='Invalid refresh token')

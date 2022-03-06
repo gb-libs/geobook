@@ -1,29 +1,31 @@
 import typing
-from datetime import timedelta
+from datetime import datetime, timedelta
 
-from pydantic import Field
-
-from geobook.db.backends.mongodb import models
 from geobook.settings import get_config
+from pydantic import BaseModel, Field
 
 config = get_config()
 
 JWK = typing.Dict[str, str]
 
-models.
-class JWT(CoreModel):
-    iss: str = "phresh.io"
-    aud: str = JWT_AUDIENCE
-    iat: float = datetime.timestamp(datetime.utcnow())
-    exp: float = datetime.timestamp(datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+
+class JWTPayload(BaseModel):
+    iss: str = config.JWT.ISS
+    sub: typing.Optional[str]
+
+    iat: datetime = Field(
+        default_factory=datetime.utcnow)
+
+    exp: datetime = Field(
+        default_factory=datetime.utcnow() + timedelta(
+            minutes=config.JWT.ACCESS_TOKEN_EXPIRES_MINUTES))
 
 
-class AccessToken(models.MongoModel):
+class AccessToken(BaseModel):
     token: str = Field(
         min_length=1)
 
-    expires: timedelta = timedelta(
-        minutes=config.JWT.ACCESS_TOKEN_EXPIRES_MINUTES)
+    expires: datetime
 
 
 class RefreshToken(AccessToken):
