@@ -26,11 +26,3 @@ class AccessToken(BaseModel):
         min_length=1)
 
     expires: datetime
-
-
-class RefreshToken(AccessToken):
-    token: str = Field(
-        min_length=1)
-
-    expires: timedelta = timedelta(
-        minutes=config.JWT.REFRESH_TOKEN_EXPIRES_MINUTES)

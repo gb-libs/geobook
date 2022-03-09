@@ -1,10 +1,12 @@
 import typing
 
-from geobook.apps.users.models.user import UserModel, UserReadModel, UserWriteModel
+from geobook.apps.users.models.user import UserModel, UserReadModel, \
+    UserWriteModel
 from geobook.db.backends.mongodb import client
 
 
 class UserManager(client.DatabaseClient):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

@@ -1,18 +1,32 @@
 from geobook.apps.users.managers.user import UserManager
 from geobook.apps.users.models.user import UserReadModel, UserWriteModel
-from geobook.apps.users.services.base import BaseUserService
 from geobook.db.backends.mongodb import exceptions
 from geobook.settings.common import Settings
+from passlib.context import CryptContext
 
 
-class UserService(BaseUserService):
+class UserService:
+    pwd_context = CryptContext(schemes=['bcrypt'])
 
     def __init__(
-        self,
-        settings: Settings,
+            self,
+            settings: Settings,
     ):
         self.settings = settings
         self.user_manager = UserManager(settings=settings)
+
+    def encode_password(
+            self,
+            password: str,
+    ) -> str:
+        return self.pwd_context.hash(password)
+
+    def verify_password(
+            self,
+            password: str,
+            encoded_password: str,
+    ) -> bool:
+        return self.pwd_context.verify(password, encoded_password)
 
     async def create_user(
             self,
@@ -31,3 +45,10 @@ class UserService(BaseUserService):
 
     async def get_password_hash(self, user: UserWriteModel) -> str:
         return self.pwd_context.hash(user.password.get_secret_value())
+
+    async def get_user_by_username(
+            self,
+            user: UserWriteModel,
+    ) -> UserReadModel:
+        return await self.user_manager.get_user_by_username(
+            username=user.username)
