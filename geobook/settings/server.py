@@ -9,5 +9,4 @@ class ServerSettings(BaseModel):
     LOG_LEVEL: typing.Optional[str] = 'info'
     IS_DEBUG: typing.Optional[bool] = True
     WORKER: typing.Optional[int] = 1
-    LIMIT_CONCURRENCY: typing.Optional[int] = 1
-    LIMIT_MAX_REQUESTS: typing.Optional[int] = 1
+    LIMIT_CONCURRENCY: typing.Optional[int] = 5

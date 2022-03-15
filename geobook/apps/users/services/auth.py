@@ -3,15 +3,15 @@ from fastapi import HTTPException
 from geobook.apps.users.managers.user import UserManager
 from geobook.apps.users.models.auth import AccessToken, JWTPayload
 from geobook.apps.users.models.user import UserReadModel
-from geobook.settings.common import Settings
+from geobook.settings import get_config
+
+settings = get_config()
 
 
 class AuthService:
 
-    def __init__(
-            self,
-            settings: Settings,
-    ):
+    def __init__(self):
+
         self.settings = settings
         self.user_manager = UserManager(settings=settings)
 

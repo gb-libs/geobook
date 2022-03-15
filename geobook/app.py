@@ -56,7 +56,6 @@ def create_server(app: FastAPI) -> uvicorn.Server:
         debug=config.SERVER.IS_DEBUG,
         workers=config.SERVER.WORKER,
         limit_concurrency=config.SERVER.LIMIT_CONCURRENCY,
-        limit_max_requests=config.SERVER.LIMIT_MAX_REQUESTS,
     )
     u_config.load()
 

@@ -4,10 +4,8 @@ from geobook.apps.users.models.auth import AccessToken
 from geobook.apps.users.models.user import UserReadModel, UserWriteModel
 from geobook.apps.users.services.auth import AuthService
 from geobook.apps.users.services.user import UserService
-from geobook.settings import get_config
 
 router = APIRouter(prefix='/auth', tags=['Auth'])
-settings = get_config()
 security = HTTPBearer()
 
 
@@ -17,7 +15,7 @@ security = HTTPBearer()
 )
 async def signup(
         user_write_model: UserWriteModel,
-        user_service: UserService(settings=settings) = Depends()
+        user_service: UserService = Depends(),
 ):
     new_user = await user_service.create_user(user=user_write_model)
     return new_user
@@ -29,8 +27,8 @@ async def signup(
 )
 async def login(
         user_write_model: UserWriteModel,
-        user_service: UserService(settings=settings) = Depends(),
-        auth_service: AuthService(settings=settings) = Depends(),
+        user_service: UserService = Depends(),
+        auth_service: AuthService = Depends(),
 ):
     own_user = await user_service.get_user_by_username(user=user_write_model)
 
@@ -38,8 +36,8 @@ async def login(
         return HTTPException(status_code=401, detail='Invalid username')
 
     if not user_service.verify_password(
-            password=user_write_model.password,
-            encoded_password=own_user.password,
+            password=user_write_model.password.get_secret_value(),
+            encoded_password=own_user.password.get_secret_value(),
     ):
         return HTTPException(status_code=401, detail='Invalid password')
 
@@ -52,6 +50,6 @@ async def login(
 )
 async def refresh_token(
         credentials: HTTPAuthorizationCredentials = Security(security),
-        auth_service: AuthService(settings=settings) = Depends(),
+        auth_service: AuthService = Depends(),
 ):
     return auth_service.decode_token(token=credentials.credentials)

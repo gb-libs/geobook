@@ -1,17 +1,16 @@
 from geobook.apps.users.managers.user import UserManager
 from geobook.apps.users.models.user import UserReadModel, UserWriteModel
 from geobook.db.backends.mongodb import exceptions
-from geobook.settings.common import Settings
+from geobook.settings import get_config
 from passlib.context import CryptContext
+
+settings = get_config()
 
 
 class UserService:
     pwd_context = CryptContext(schemes=['bcrypt'])
 
-    def __init__(
-            self,
-            settings: Settings,
-    ):
+    def __init__(self):
         self.settings = settings
         self.user_manager = UserManager(settings=settings)
 
