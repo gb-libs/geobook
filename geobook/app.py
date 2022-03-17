@@ -2,6 +2,8 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from geobook.apps.users.routers import v1 as users_routers_v1
+from geobook.core.exception_handler import validation_exception_handler
+from geobook.db.backends.mongodb import exceptions
 from geobook.db.backends.mongodb.client import DatabaseClient
 from geobook.settings import get_config
 
@@ -19,6 +21,13 @@ def create_app() -> FastAPI:
 
 def add_router(app: FastAPI) -> None:
     app.include_router(users_routers_v1.router, prefix='/api')
+
+
+def add_exception_handler(app: FastAPI) -> None:
+    app.add_exception_handler(
+        exceptions.ValidationError,
+        validation_exception_handler,
+    )
 
 
 def add_event_handler(app: FastAPI) -> None:
@@ -65,6 +74,7 @@ def create_server(app: FastAPI) -> uvicorn.Server:
 async def run() -> None:
     app = create_app()
     add_event_handler(app)
+    add_exception_handler(app)
     add_router(app)
     add_middleware(app)
     await create_server(app).serve()

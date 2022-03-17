@@ -1,7 +1,6 @@
 import typing
 
-from geobook.apps.users.models.user import UserModel, UserReadModel, \
-    UserWriteModel
+from geobook.apps.users.models.user import UserModel, UserReadModel, UserWriteModel
 from geobook.db.backends.mongodb import client
 
 

@@ -17,8 +17,7 @@ async def signup(
         user_write_model: UserWriteModel,
         user_service: UserService = Depends(),
 ):
-    new_user = await user_service.create_user(user=user_write_model)
-    return new_user
+    return await user_service.create_user(user=user_write_model)
 
 
 @router.post(
@@ -33,13 +32,13 @@ async def login(
     own_user = await user_service.get_user_by_username(user=user_write_model)
 
     if own_user is None:
-        return HTTPException(status_code=401, detail='Invalid username')
+        raise HTTPException(status_code=401, detail='Invalid username')
 
     if not user_service.verify_password(
             password=user_write_model.password.get_secret_value(),
             encoded_password=own_user.password.get_secret_value(),
     ):
-        return HTTPException(status_code=401, detail='Invalid password')
+        raise HTTPException(status_code=401, detail='Invalid password')
 
     return await auth_service.encode_token(username=own_user.username)
 

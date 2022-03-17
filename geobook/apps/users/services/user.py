@@ -33,10 +33,8 @@ class UserService:
     ) -> UserReadModel:
         if await self.user_manager.get_user_by_username(username=user.username):
             raise exceptions.ValidationError(
-                {
-                    'username': f'Username "{user.username}" is already taken, '
-                                f'choose another username.',
-                },
+                f'Username "{user.username}" is already taken, '
+                f'choose another username.',
             )
 
         user.password = await self.get_password_hash(user=user)
