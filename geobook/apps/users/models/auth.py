@@ -6,8 +6,6 @@ from pydantic import BaseModel, Field
 
 config = get_config()
 
-JWK = typing.Dict[str, str]
-
 
 class JWTPayload(BaseModel):
     iss: str = config.JWT.ISS
