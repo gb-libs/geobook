@@ -15,21 +15,21 @@ class UserService:
         self.user_manager = UserManager(settings=settings)
 
     def encode_password(
-            self,
-            password: str,
+        self,
+        password: str,
     ) -> str:
         return self.pwd_context.hash(password)
 
     def verify_password(
-            self,
-            password: str,
-            encoded_password: str,
+        self,
+        password: str,
+        encoded_password: str,
     ) -> bool:
         return self.pwd_context.verify(password, encoded_password)
 
     async def create_user(
-            self,
-            user: UserWriteModel,
+        self,
+        user: UserWriteModel,
     ) -> UserReadModel:
         if await self.user_manager.get_user_by_username(username=user.username):
             raise exceptions.ValidationError(
@@ -44,8 +44,8 @@ class UserService:
         return self.pwd_context.hash(user.password.get_secret_value())
 
     async def get_user_by_username(
-            self,
-            user: UserWriteModel,
+        self,
+        user: UserWriteModel,
     ) -> UserReadModel:
         return await self.user_manager.get_user_by_username(
             username=user.username)

@@ -10,8 +10,8 @@ class UserManager(client.DatabaseClient):
         super().__init__(*args, **kwargs)
 
     async def create_user(
-            self,
-            user: UserWriteModel,
+        self,
+        user: UserWriteModel,
     ) -> UserReadModel:
         user_collection = await self.get_collection(name=UserModel.__name__)
         row = await user_collection.insert_one(user.to_db())
@@ -19,8 +19,8 @@ class UserManager(client.DatabaseClient):
         return UserReadModel.from_db(user_db)
 
     async def get_user_by_username(
-            self,
-            username: str,
+        self,
+        username: str,
     ) -> typing.Optional[UserReadModel]:
         user_collection = await self.get_collection(name=UserModel.__name__)
         user_db = await user_collection.find_one({'username': username})

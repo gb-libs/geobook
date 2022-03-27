@@ -7,16 +7,16 @@ from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 
 class DatabaseClient(BaseDatabaseClient):
     def __init__(
-            self,
-            settings: Settings,
+        self,
+        settings: Settings,
     ):
         self.client = None
         self.database = None
         self.settings = settings
 
     async def get_collection(
-            self,
-            name: str,
+        self,
+        name: str,
     ) -> AsyncIOMotorCollection:
         if self.database is None:
             await self.connection_db()
