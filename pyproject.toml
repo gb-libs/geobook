@@ -41,9 +41,9 @@ pydantic = {extras = ["dotenv"], version = "^1.9.0"}
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 asyncio = "^3.4.3"
-motor = "^2.5.1"
 click = "^8.0.3"
 PyJWT = "^2.3.0"
+motor = "^3.0.0"
 
 [tool.poetry.dev-dependencies]
 isort = "^5.10.1"
