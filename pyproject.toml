@@ -35,7 +35,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-fastapi = "^0.93.0"
+fastapi = "^0.94.0"
 uvicorn = "^0.21.0"
 pydantic = {extras = ["dotenv"], version = "^1.9.0"}
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
